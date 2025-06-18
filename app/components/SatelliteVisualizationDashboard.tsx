@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useMarineData } from '../contexts/MarineDataContext'
 import { SatelliteChlorophyllService } from '../lib/satellite-chlorophyll'
+import AppNavigation from './AppNavigation'
 import OceanColorMap from './OceanColorMap'
 import ChlorophyllCard from './ChlorophyllCard'
 import ChlorophyllTimeSeries from './ChlorophyllTimeSeries'
@@ -102,6 +103,9 @@ export default function SatelliteVisualizationDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-8">
+      {/* Navigation */}
+      <AppNavigation />
+      
       {/* Header */}
       <div className="bg-white border-b border-gray-200 mb-6">
         <div className="container mx-auto px-4 py-6">
