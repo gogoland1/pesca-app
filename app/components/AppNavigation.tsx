@@ -40,7 +40,7 @@ export default function AppNavigation({ onNewSearch }: AppNavigationProps) {
       icon: Home,
       active: currentView === 'conditions',
       onClick: navigateToConditions,
-      href: '/dashboard'
+      href: '/'
     },
     {
       key: 'visualizations',
