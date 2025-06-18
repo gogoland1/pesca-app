@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import WeatherCard from './WeatherCard'
 import TemperatureCard from './TemperatureCard'
 import TideDetailCard from './TideDetailCard'
-import { CloudRain, Thermometer, Gauge, Waves, Cloud, Droplets, Leaf, MapPin, RefreshCw, Wind, Sun, Home } from 'lucide-react'
+import WaveForecastChart from './WaveForecastChart'
+import { CloudRain, Thermometer, Gauge, Waves, Cloud, Droplets, Leaf, MapPin, RefreshCw, Wind, Sun, Home, BarChart3 } from 'lucide-react'
 import { useMarineData } from '../contexts/MarineDataContext'
 import { useRouter } from 'next/navigation'
 
@@ -18,6 +19,8 @@ export default function WeatherConditionsView() {
   } = useMarineData()
   
   const router = useRouter()
+  const [showWaveForecast, setShowWaveForecast] = useState(false)
+  const [forecastDays, setForecastDays] = useState<1 | 3 | 5>(3)
 
   const getStatusFromValue = (value: number, thresholds: { low: number, high: number }): 'low' | 'normal' | 'high' => {
     if (value < thresholds.low) return 'low'
@@ -222,9 +225,27 @@ export default function WeatherConditionsView() {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {weatherCards.map((data, index) => (
-          <WeatherCard key={index} {...data} />
-        ))}
+        {weatherCards.map((data, index) => {
+          // Card especial para oleaje con pronóstico
+          if (data.title === 'Altura de Olas') {
+            return (
+              <div key={index} className="relative">
+                <div 
+                  className="cursor-pointer"
+                  onMouseEnter={() => setShowWaveForecast(true)}
+                  onMouseLeave={() => setShowWaveForecast(false)}
+                >
+                  <WeatherCard {...data} />
+                  {/* Indicador de que hay más información */}
+                  <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
+                    <BarChart3 className="h-3 w-3" />
+                  </div>
+                </div>
+              </div>
+            )
+          }
+          return <WeatherCard key={index} {...data} />
+        })}
         
         {/* Combined Temperature Card */}
         {marineData && (
@@ -259,6 +280,13 @@ export default function WeatherConditionsView() {
           <p>🇨🇱 Especializado para aguas chilenas</p>
         </div>
       </div>
+      
+      {/* Panel flotante de pronóstico de oleaje */}
+      <WaveForecastChart
+        isVisible={showWaveForecast}
+        onClose={() => setShowWaveForecast(false)}
+        days={forecastDays}
+      />
     </div>
   )
 }
