@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-ocean-50 text-gray-900;
+  }
+}
+
+@layer components {
+  .weather-card {
+    @apply bg-white rounded-lg shadow-md p-4 border border-ocean-200;
+  }
+  
+  .metric-value {
+    @apply text-2xl font-bold text-ocean-800;
+  }
+  
+  .metric-label {
+    @apply text-sm text-ocean-600 uppercase tracking-wide;
+  }
+}
+
+/* Leaflet map custom styles */
+.leaflet-container {
+  font-family: inherit;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.custom-port-marker {
+  background: transparent;
+  border: none;
+}
+
+.chlorophyll-legend {
+  font-family: inherit;
+}
+
+/* Ocean color visualization */
+.chlorophyll-overlay {
+  mix-blend-mode: multiply;
+}
+
+.composite-8day-overlay {
+  mix-blend-mode: multiply;
+}
+
+/* Ocean Color legend styles */
+.ocean-color-legend,
+.chlorophyll-legend {
+  z-index: 1000;
+  pointer-events: auto;
+}
+
+.ocean-color-legend .leaflet-control,
+.chlorophyll-legend .leaflet-control {
+  margin: 0;
+  border: none;
+  background: transparent;
+}
+
+/* Prevent legend overlap */
+.leaflet-bottom.leaflet-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.leaflet-bottom.leaflet-right .leaflet-control {
+  margin: 0;
+  clear: none;
+}
+
+/* Map control improvements */
+.leaflet-control-layers {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.leaflet-control-zoom {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.leaflet-control-zoom a {
+  border-radius: 4px;
+}
