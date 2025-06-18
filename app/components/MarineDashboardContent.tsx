@@ -1,15 +1,18 @@
 'use client'
 
 import { useMarineData, useMarineNavigation } from '../contexts/MarineDataContext'
+import AppNavigation from './AppNavigation'
 import MarineNavigationTabs from './MarineNavigationTabs'
 import WeatherConditionsView from './WeatherConditionsView'
 import ModelosPescaView from './ModelosPescaView'
 import PrediccionesView from './PrediccionesView'
-import { RefreshCw, MapPin } from 'lucide-react'
+import { RefreshCw, MapPin, Home } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function MarineDashboardContent() {
-  const { marineData, currentPort, loading, error } = useMarineData()
+  const { marineData, currentPort, loading, error, refreshData } = useMarineData()
   const { currentView, getViewTitle, getViewDescription } = useMarineNavigation()
+  const router = useRouter()
 
   if (loading && !marineData) {
     return (
@@ -43,36 +46,41 @@ export default function MarineDashboardContent() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-ocean-50 to-ocean-100">
-      <div className="container mx-auto px-4 py-6">
-        {/* Header Principal */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-ocean-800 mb-4">
-            🌊 Dashboard Meteorológico Pesquero
-          </h1>
-          <div className="flex items-center justify-center space-x-2 text-ocean-600 mb-2">
-            <MapPin className="h-5 w-5" />
-            <span className="text-lg">
-              {currentPort.name} • {currentPort.region}
-            </span>
+      <AppNavigation />
+      
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        {/* Header con información actual y Nueva Búsqueda */}
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-ocean-800 mb-4">
+            {getViewTitle()}
+          </h2>
+          <div className="flex items-center justify-center space-x-2 text-ocean-600 mb-4">
+            <MapPin className="h-4 w-4" />
+            <span>{currentPort.name} • {currentPort.coordinates.lat.toFixed(4)}°, {currentPort.coordinates.lon.toFixed(4)}°</span>
+            <button 
+              onClick={refreshData}
+              className="ml-2 p-1 hover:bg-ocean-100 rounded-full transition-colors"
+              title="Actualizar datos"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </button>
           </div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Plataforma integral con datos meteorológicos, modelos de IA y predicciones 
-            para optimizar tus actividades de pesca artesanal
-          </p>
+          <div className="text-sm text-gray-500 mb-4">
+            {currentPort.region}
+          </div>
+          
+          {/* Botón Nueva Búsqueda */}
+          <button
+            onClick={() => router.push('/')}
+            className="inline-flex items-center space-x-2 bg-ocean-600 hover:bg-ocean-700 text-white px-6 py-3 rounded-lg transition-colors shadow-md"
+          >
+            <Home className="h-5 w-5" />
+            <span className="font-medium">Nueva Búsqueda</span>
+          </button>
         </div>
 
         {/* Navegación entre vistas */}
         <MarineNavigationTabs />
-
-        {/* Header de vista actual */}
-        <div className="text-center mb-6">
-          <h2 className="text-3xl font-bold text-ocean-800 mb-2">
-            {getViewTitle()}
-          </h2>
-          <p className="text-gray-600 max-w-3xl mx-auto">
-            {getViewDescription()}
-          </p>
-        </div>
 
         {/* Contenido de la vista actual */}
         <div className="space-y-6">
