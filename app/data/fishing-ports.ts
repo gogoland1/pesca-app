@@ -148,6 +148,26 @@ export const CHILEAN_FISHING_PORTS: FishingPort[] = [
     portType: 'puerto',
     approximatePopulation: 480
   },
+  {
+    id: 'chungungo',
+    name: 'Caleta Chungungo',
+    region: 'Coquimbo',
+    coordinates: { lat: -32.0133, lon: -71.5200 },
+    description: 'Famosa caleta de mariscos y pesca artesanal',
+    mainSpecies: ['Loco', 'Erizo', 'Ostión', 'Congrio'],
+    portType: 'caleta',
+    approximatePopulation: 75
+  },
+  {
+    id: 'guanaqueros',
+    name: 'Guanaqueros',
+    region: 'Coquimbo',
+    coordinates: { lat: -30.1889, lon: -71.4389 },
+    description: 'Balneario con tradición pesquera artesanal',
+    mainSpecies: ['Corvina', 'Lenguado', 'Pejerrey', 'Congrio'],
+    portType: 'caleta',
+    approximatePopulation: 140
+  },
 
   // REGIÓN DE VALPARAÍSO  
   {
@@ -189,6 +209,36 @@ export const CHILEAN_FISHING_PORTS: FishingPort[] = [
     mainSpecies: ['Congrio', 'Corvina', 'Lenguado', 'Pejerrey'],
     portType: 'caleta',
     approximatePopulation: 85
+  },
+  {
+    id: 'algarrobo',
+    name: 'Algarrobo',
+    region: 'Valparaíso',
+    coordinates: { lat: -33.3667, lon: -71.6667 },
+    description: 'Famoso balneario con pesca deportiva y artesanal',
+    mainSpecies: ['Corvina', 'Lenguado', 'Pejerrey', 'Jurel'],
+    portType: 'caleta',
+    approximatePopulation: 195
+  },
+  {
+    id: 'el-quisco',
+    name: 'El Quisco',
+    region: 'Valparaíso',
+    coordinates: { lat: -33.3989, lon: -71.7056 },
+    description: 'Caleta turística con activa pesca artesanal',
+    mainSpecies: ['Corvina', 'Congrio', 'Lenguado', 'Cabrilla'],
+    portType: 'caleta',
+    approximatePopulation: 160
+  },
+  {
+    id: 'cartagena',
+    name: 'Cartagena',
+    region: 'Valparaíso',
+    coordinates: { lat: -33.5539, lon: -71.6061 },
+    description: 'Histórico balneario con tradición pesquera',
+    mainSpecies: ['Corvina', 'Congrio', 'Lenguado', 'Jurel'],
+    portType: 'caleta',
+    approximatePopulation: 225
   },
 
   // REGIÓN DEL LIBERTADOR BERNARDO O'HIGGINS
@@ -284,6 +334,36 @@ export const CHILEAN_FISHING_PORTS: FishingPort[] = [
     portType: 'caleta',
     approximatePopulation: 45
   },
+  {
+    id: 'coronel',
+    name: 'Coronel',
+    region: 'Biobío',
+    coordinates: { lat: -37.0333, lon: -73.1500 },
+    description: 'Puerto carbonífero con importante pesca industrial',
+    mainSpecies: ['Merluza', 'Sardina', 'Anchoveta', 'Jurel'],
+    portType: 'puerto',
+    approximatePopulation: 890
+  },
+  {
+    id: 'lota',
+    name: 'Lota',
+    region: 'Biobío',
+    coordinates: { lat: -37.0889, lon: -73.1583 },
+    description: 'Histórico puerto minero con tradición pesquera',
+    mainSpecies: ['Merluza', 'Congrio', 'Sardina', 'Corvina'],
+    portType: 'puerto',
+    approximatePopulation: 520
+  },
+  {
+    id: 'dichato',
+    name: 'Dichato',
+    region: 'Biobío',
+    coordinates: { lat: -36.5500, lon: -72.9333 },
+    description: 'Reconocida caleta pesquera y balneario',
+    mainSpecies: ['Merluza', 'Congrio', 'Loco', 'Erizo'],
+    portType: 'caleta',
+    approximatePopulation: 280
+  },
 
   // REGIÓN DE LA ARAUCANÍA
   {
@@ -368,6 +448,26 @@ export const CHILEAN_FISHING_PORTS: FishingPort[] = [
     mainSpecies: ['Salmón', 'Merluza', 'Congrio', 'Centolla'],
     portType: 'puerto',
     approximatePopulation: 2200
+  },
+  {
+    id: 'calbuco',
+    name: 'Calbuco',
+    region: 'Los Lagos',
+    coordinates: { lat: -41.7667, lon: -73.1333 },
+    description: 'Importante centro de miticultura y mariscos',
+    mainSpecies: ['Cholga', 'Choro', 'Ostión', 'Salmón'],
+    portType: 'puerto',
+    approximatePopulation: 680
+  },
+  {
+    id: 'maullin',
+    name: 'Maullín',
+    region: 'Los Lagos',
+    coordinates: { lat: -41.6167, lon: -73.7000 },
+    description: 'Puerto fluvial y marítimo en desembocadura del río',
+    mainSpecies: ['Salmón', 'Congrio', 'Corvina', 'Robalo'],
+    portType: 'puerto',
+    approximatePopulation: 320
   },
 
   // REGIÓN DE AYSÉN
