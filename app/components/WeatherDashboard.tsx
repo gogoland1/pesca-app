@@ -6,11 +6,13 @@ import TemperatureCard from './TemperatureCard'
 import TideDetailCard from './TideDetailCard'
 import AppNavigation from './AppNavigation'
 import WaveForecastChart from './WaveForecastChart'
-import { CloudRain, Thermometer, Gauge, Waves, Cloud, Droplets, Leaf, MapPin, RefreshCw, Wind, Sun, TrendingUp, Calendar, Home, BarChart3 } from 'lucide-react'
+import { CloudRain, Thermometer, Gauge, Waves, Cloud, Droplets, Leaf, MapPin, RefreshCw, Wind, Sun, TrendingUp, Calendar, Home, BarChart3, Activity, ExternalLink } from 'lucide-react'
 import { useMarineData } from '../contexts/MarineDataContext'
 import { SatelliteChlorophyllService } from '../lib/satellite-chlorophyll'
 import { useRouter } from 'next/navigation'
 import type { FishingPort } from '../data/fishing-ports'
+import { useEnhancedWaveData, getWaveQualityIndicator } from '../hooks/useEnhancedWaveData'
+import WaveFrontProfileCard from './WaveFrontProfileCard'
 
 interface WeatherDashboardProps {
   initialPort?: FishingPort | null
@@ -27,11 +29,17 @@ export default function WeatherDashboard({ initialPort }: WeatherDashboardProps 
   } = useMarineData()
   
   const [satelliteChlorophyll, setSatelliteChlorophyll] = useState<number | null>(null)
-  const [showWaveForecast, setShowWaveForecast] = useState(false)
   const [showDetailedForecast, setShowDetailedForecast] = useState(false)
+  const [showTechnicalAnalysis, setShowTechnicalAnalysis] = useState(false)
   const [forecastDays, setForecastDays] = useState<1 | 3 | 5>(3)
   const router = useRouter()
   const satelliteService = new SatelliteChlorophyllService()
+  
+  // Enhanced wave data with multi-source integration
+  const { waveData: enhancedWaveData, loading: waveLoading } = useEnhancedWaveData(
+    currentPort.coordinates.lat,
+    currentPort.coordinates.lon
+  )
 
   // Set initial port if provided
   useEffect(() => {
@@ -155,15 +163,46 @@ export default function WeatherDashboard({ initialPort }: WeatherDashboardProps 
         return 'Baja productividad'
       })()
     },
-    {
-      icon: Waves,
-      title: 'Altura de Olas',
-      value: marineData.weather.waveHeight.toFixed(1),
-      unit: 'm',
-      status: getStatusFromValue(marineData.weather.waveHeight, { low: 1, high: 3 }),
-      description: marineData.weather.waveHeight > 3 ? 'Mar agitado' : 
-                   marineData.weather.waveHeight > 1.5 ? 'Mar moderado' : 'Mar tranquilo'
-    },
+    (() => {
+      // Use enhanced wave data if available, fallback to marine data
+      const waveHeight = enhancedWaveData?.wave_height || marineData.weather.waveHeight
+      const qualityIndicator = enhancedWaveData ? getWaveQualityIndicator(enhancedWaveData.quality_score) : null
+      
+      return {
+        icon: Waves,
+        title: 'Altura de Olas',
+        value: waveHeight.toFixed(1),
+        unit: 'm',
+        status: getStatusFromValue(waveHeight, { low: 1, high: 3 }),
+        description: (() => {
+          const condition = waveHeight > 3 ? 'Mar agitado' : 
+                           waveHeight > 1.5 ? 'Mar moderado' : 'Mar tranquilo'
+          
+          // Add quality indicator subtly
+          if (qualityIndicator && enhancedWaveData?.is_multi_source) {
+            return `${condition} • ${qualityIndicator.icon} Dato verificado`
+          } else if (qualityIndicator) {
+            return `${condition} • ${qualityIndicator.icon} ${qualityIndicator.label}`
+          }
+          
+          return condition
+        })(),
+        dataInfo: enhancedWaveData ? {
+          date: new Date(enhancedWaveData.timestamp).toLocaleDateString('es-CL'),
+          coordinates: enhancedWaveData.coordinates ? {
+            lat: enhancedWaveData.coordinates.lat,
+            lon: enhancedWaveData.coordinates.lon
+          } : {
+            lat: currentPort.coordinates.lat,
+            lon: currentPort.coordinates.lon
+          },
+          source: enhancedWaveData.is_multi_source 
+            ? `Copernicus + ${enhancedWaveData.source_count - 1} fuentes` 
+            : "Copernicus Marine (Oficial)"
+        } : undefined,
+        showTechnicalButton: !!enhancedWaveData // Show button if we have any enhanced wave data
+      }
+    })(),
     (() => {
       const tide = formatTideInfo(marineData.weather.tideLevel)
       return {
@@ -292,62 +331,33 @@ export default function WeatherDashboard({ initialPort }: WeatherDashboardProps 
         />
       )}
 
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {weatherCards.map((data, index) => {
-          // Card especial para oleaje con pronóstico
+          // Card especial para oleaje con dos botones claros
           if (data.title === 'Altura de Olas') {
             return (
-              <div 
-                key={index} 
-                className="relative group"
-                onMouseEnter={() => setShowWaveForecast(true)}
-                onMouseLeave={() => setShowWaveForecast(false)}
-              >
+              <div key={index} className="space-y-3">
                 <WeatherCard {...data} />
-                {/* Indicador de que hay más información */}
-                <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
-                  <BarChart3 className="h-3 w-3" />
-                </div>
                 
-                {/* Mini chart que aparece dentro del card */}
-                {showWaveForecast && (
-                  <div className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-lg border-2 border-blue-500 p-3 z-10 shadow-lg">
-                    <div className="text-xs font-semibold text-blue-900 mb-2 flex items-center">
-                      <BarChart3 className="h-3 w-3 mr-1" />
-                      Pronóstico 3 días
-                    </div>
-                    
-                    {/* Mini gráfico simplificado */}
-                    <div className="space-y-1">
-                      {[
-                        { day: 'Hoy', height: 2.1, color: 'bg-yellow-400' },
-                        { day: 'Mañana', height: 1.8, color: 'bg-yellow-400' },
-                        { day: 'Pasado', height: 1.4, color: 'bg-green-400' }
-                      ].map((item, i) => (
-                        <div key={i} className="flex items-center text-xs">
-                          <span className="w-12 text-gray-600">{item.day}</span>
-                          <div className="flex-1 bg-gray-200 rounded-full h-2 mx-2">
-                            <div 
-                              className={`h-2 rounded-full ${item.color}`}
-                              style={{ width: `${(item.height / 3) * 100}%` }}
-                            />
-                          </div>
-                          <span className="w-8 text-gray-800 font-medium">{item.height}m</span>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <button 
-                      className="text-xs text-blue-600 mt-2 font-medium hover:text-blue-800 transition-colors"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setShowDetailedForecast(true)
-                      }}
-                    >
-                      🖱️ Click para ver detalle completo
-                    </button>
-                  </div>
-                )}
+                {/* Dos botones claros sin hover problemático */}
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setShowDetailedForecast(true)}
+                    className="flex items-center justify-center space-x-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-2 px-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md text-xs font-medium"
+                  >
+                    <BarChart3 className="h-3 w-3" />
+                    <span>📊 Pronóstico</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => setShowTechnicalAnalysis(true)}
+                    className="flex items-center justify-center space-x-1 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white py-2 px-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md text-xs font-medium"
+                  >
+                    <Activity className="h-3 w-3" />
+                    <span>🔬 Análisis</span>
+                  </button>
+                </div>
               </div>
             )
           }
@@ -445,6 +455,55 @@ export default function WeatherDashboard({ initialPort }: WeatherDashboardProps 
         onClose={() => setShowDetailedForecast(false)}
         days={forecastDays}
       />
+      
+      {/* Panel flotante de análisis técnico multi-distancia */}
+      {showTechnicalAnalysis && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Activity className="h-5 w-5 text-blue-600" />
+                <h3 className="text-lg font-semibold text-gray-900">Análisis Técnico Multi-Distancia</h3>
+              </div>
+              <button
+                onClick={() => setShowTechnicalAnalysis(false)}
+                className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-4">
+              <WaveFrontProfileCard
+                latitude={currentPort.coordinates.lat}
+                longitude={currentPort.coordinates.lon}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer con enlace a Olitai */}
+      <div className="mt-12 pt-8 border-t border-gray-200 text-center">
+        <div className="space-y-4">
+          <a
+            href="https://gogoland1.github.io/olitai.github.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-6 py-3 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md transform hover:scale-105"
+          >
+            <ExternalLink className="h-4 w-4" />
+            <div className="text-left">
+              <div className="font-medium">Visita Olitai Project!</div>
+              <div className="text-xs text-purple-200">mi otro proyecto</div>
+            </div>
+          </a>
+          
+          <div className="text-sm text-gray-500">
+            <p>🇨🇱 Desarrollado para pescadores artesanales chilenos</p>
+            <p>Datos en tiempo real desde APIs meteorológicas y oceanográficas oficiales</p>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
   )

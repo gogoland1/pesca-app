@@ -46,10 +46,10 @@ export async function GET(request: NextRequest) {
     const response = await fetch(erddapUrl)
 
     if (!response.ok) {
-      console.log(`ERDDAP API error: ${response.status} - ${response.statusText}`)
+      console.log(`ℹ️  ERDDAP service unavailable (${response.status}), using simulation`)
       
       // If no satellite data available, generate realistic values for Chilean coast
-      console.log('Using enhanced satellite simulation for Chilean waters')
+      console.log('✅ Using enhanced satellite simulation for Chilean waters')
       
       const distanceFromCoast = Math.abs(lonNum + 71) * 111 // km from coast
       

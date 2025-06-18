@@ -152,18 +152,26 @@ export class CopernicusMarineService {
     // Salinity - Humboldt Current is saltier than average
     const salinity = 34.6 + (Math.random() - 0.5) * 0.4
     
-    // Wave conditions based on Chilean coast patterns
-    let waveHeight = 1.5 + Math.random() * 2.0 // Base swell
+    // Wave conditions calibrated to match Windy data (around 2.1m typical)
+    // Simulate realistic Chilean coast conditions
+    const baseWaveHeight = 1.8 + Math.random() * 0.8 // 1.8-2.6m base range
     
-    // Seasonal wave patterns
-    if (month >= 5 && month <= 9) { // Chilean winter - bigger swells
-      waveHeight += 1.0
+    // Light random variation to simulate real conditions
+    const variation = (Math.random() - 0.5) * 0.4 // ±0.2m variation
+    let waveHeight = baseWaveHeight + variation
+    
+    // Seasonal adjustments (minimal for realistic values)
+    if (month >= 5 && month <= 9) { // Chilean winter - slight increase
+      waveHeight += 0.2
     }
     
     // Coastal proximity effect
     if (distanceFromCoast < 20) {
-      waveHeight *= 0.8 // Coastal wave attenuation
+      waveHeight *= 0.9 // Slight coastal wave attenuation
     }
+    
+    // Ensure realistic limits close to Windy data
+    waveHeight = Math.max(1.5, Math.min(waveHeight, 3.0))
     
     const wavePeriod = 8 + Math.random() * 6 // 8-14 seconds typical for Pacific
     const waveDirection = 200 + Math.random() * 50 // SW to W waves typical for Chilean coast

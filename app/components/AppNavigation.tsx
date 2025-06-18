@@ -1,7 +1,7 @@
 'use client'
 
 import { useMarineData, useMarineNavigation } from '../contexts/MarineDataContext'
-import { MapPin, RefreshCw, Home, TrendingUp, Calendar, RotateCcw, Satellite } from 'lucide-react'
+import { MapPin, RefreshCw, Home, TrendingUp, Calendar, RotateCcw, Satellite, ExternalLink } from 'lucide-react'
 
 interface AppNavigationProps {
   onNewSearch?: () => void
@@ -111,6 +111,18 @@ export default function AppNavigation({ onNewSearch }: AppNavigationProps) {
               <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Actualizar</span>
             </button>
+
+            {/* Enlace a Olitai Project */}
+            <a
+              href="https://gogoland1.github.io/olitai.github.io/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 px-3 py-2 text-sm bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-lg transition-colors"
+              title="Visita mi otro proyecto"
+            >
+              <ExternalLink className="h-4 w-4" />
+              <span className="hidden sm:inline">Olitai</span>
+            </a>
 
             {/* Botón Nueva Búsqueda */}
             <button

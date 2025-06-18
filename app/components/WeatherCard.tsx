@@ -7,6 +7,14 @@ interface WeatherCardProps {
   unit: string
   status: 'low' | 'normal' | 'high'
   description: string
+  dataInfo?: {
+    date?: string
+    coordinates?: {
+      lat: number
+      lon: number
+    }
+    source?: string
+  }
 }
 
 export default function WeatherCard({
@@ -15,7 +23,8 @@ export default function WeatherCard({
   value,
   unit,
   status,
-  description
+  description,
+  dataInfo
 }: WeatherCardProps) {
   const getStatusColor = () => {
     switch (status) {
@@ -60,6 +69,32 @@ export default function WeatherCard({
       </div>
       
       <p className="text-xs text-ocean-600">{description}</p>
+      
+      {/* Show data info for official data */}
+      {dataInfo && (
+        <div className="mt-3 pt-2 border-t border-gray-200">
+          {dataInfo.date && (
+            <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+              <span>📅 Fecha:</span>
+              <span className="font-mono">{dataInfo.date}</span>
+            </div>
+          )}
+          {dataInfo.coordinates && (
+            <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+              <span>📍 GPS:</span>
+              <span className="font-mono">
+                {dataInfo.coordinates.lat.toFixed(4)}°, {dataInfo.coordinates.lon.toFixed(4)}°
+              </span>
+            </div>
+          )}
+          {dataInfo.source && (
+            <div className="text-xs text-blue-600 font-medium">
+              🔬 {dataInfo.source}
+            </div>
+          )}
+        </div>
+      )}
+      
     </div>
   )
 }

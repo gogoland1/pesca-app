@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Waves, Fish, Anchor, ArrowRight } from 'lucide-react'
+import { Waves, Fish, Anchor, ArrowRight, ExternalLink } from 'lucide-react'
 import FishingPortSelector from './FishingPortSelector'
 import type { FishingPort } from '../data/fishing-ports'
 
@@ -166,7 +166,20 @@ export default function LandingPage({ onPortSelected }: LandingPageProps) {
       </div>
 
       {/* Footer minimalista */}
-      <div className="absolute bottom-4 left-0 right-0 text-center">
+      <div className="absolute bottom-4 left-0 right-0 text-center space-y-3">
+        <a
+          href="https://gogoland1.github.io/olitai.github.io/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-lg transition-all duration-200 hover:bg-white/20 hover:scale-105"
+        >
+          <ExternalLink className="h-3 w-3" />
+          <div className="text-left">
+            <div className="text-sm font-medium">Visita Olitai Project!</div>
+            <div className="text-xs text-blue-200">mi otro proyecto</div>
+          </div>
+        </a>
+        
         <p className="text-blue-200 text-xs drop-shadow">
           🇨🇱 Desarrollado para pescadores artesanales chilenos
         </p>
