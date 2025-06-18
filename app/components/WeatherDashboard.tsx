@@ -5,7 +5,8 @@ import WeatherCard from './WeatherCard'
 import TemperatureCard from './TemperatureCard'
 import TideDetailCard from './TideDetailCard'
 import AppNavigation from './AppNavigation'
-import { CloudRain, Thermometer, Gauge, Waves, Cloud, Droplets, Leaf, MapPin, RefreshCw, Wind, Sun, TrendingUp, Calendar, Home } from 'lucide-react'
+import WaveForecastChart from './WaveForecastChart'
+import { CloudRain, Thermometer, Gauge, Waves, Cloud, Droplets, Leaf, MapPin, RefreshCw, Wind, Sun, TrendingUp, Calendar, Home, BarChart3 } from 'lucide-react'
 import { useMarineData } from '../contexts/MarineDataContext'
 import { SatelliteChlorophyllService } from '../lib/satellite-chlorophyll'
 import { useRouter } from 'next/navigation'
@@ -26,6 +27,9 @@ export default function WeatherDashboard({ initialPort }: WeatherDashboardProps 
   } = useMarineData()
   
   const [satelliteChlorophyll, setSatelliteChlorophyll] = useState<number | null>(null)
+  const [showWaveForecast, setShowWaveForecast] = useState(false)
+  const [showDetailedForecast, setShowDetailedForecast] = useState(false)
+  const [forecastDays, setForecastDays] = useState<1 | 3 | 5>(3)
   const router = useRouter()
   const satelliteService = new SatelliteChlorophyllService()
 
@@ -289,9 +293,66 @@ export default function WeatherDashboard({ initialPort }: WeatherDashboardProps 
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {weatherCards.map((data, index) => (
-          <WeatherCard key={index} {...data} />
-        ))}
+        {weatherCards.map((data, index) => {
+          // Card especial para oleaje con pronóstico
+          if (data.title === 'Altura de Olas') {
+            return (
+              <div 
+                key={index} 
+                className="relative group"
+                onMouseEnter={() => setShowWaveForecast(true)}
+                onMouseLeave={() => setShowWaveForecast(false)}
+              >
+                <WeatherCard {...data} />
+                {/* Indicador de que hay más información */}
+                <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
+                  <BarChart3 className="h-3 w-3" />
+                </div>
+                
+                {/* Mini chart que aparece dentro del card */}
+                {showWaveForecast && (
+                  <div className="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-lg border-2 border-blue-500 p-3 z-10 shadow-lg">
+                    <div className="text-xs font-semibold text-blue-900 mb-2 flex items-center">
+                      <BarChart3 className="h-3 w-3 mr-1" />
+                      Pronóstico 3 días
+                    </div>
+                    
+                    {/* Mini gráfico simplificado */}
+                    <div className="space-y-1">
+                      {[
+                        { day: 'Hoy', height: 2.1, color: 'bg-yellow-400' },
+                        { day: 'Mañana', height: 1.8, color: 'bg-yellow-400' },
+                        { day: 'Pasado', height: 1.4, color: 'bg-green-400' }
+                      ].map((item, i) => (
+                        <div key={i} className="flex items-center text-xs">
+                          <span className="w-12 text-gray-600">{item.day}</span>
+                          <div className="flex-1 bg-gray-200 rounded-full h-2 mx-2">
+                            <div 
+                              className={`h-2 rounded-full ${item.color}`}
+                              style={{ width: `${(item.height / 3) * 100}%` }}
+                            />
+                          </div>
+                          <span className="w-8 text-gray-800 font-medium">{item.height}m</span>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <button 
+                      className="text-xs text-blue-600 mt-2 font-medium hover:text-blue-800 transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setShowDetailedForecast(true)
+                      }}
+                    >
+                      🖱️ Click para ver detalle completo
+                    </button>
+                  </div>
+                )}
+              </div>
+            )
+          }
+          return <WeatherCard key={index} {...data} />
+        })}
         
         {/* Combined Temperature Card */}
         {marineData && (
@@ -377,6 +438,13 @@ export default function WeatherDashboard({ initialPort }: WeatherDashboardProps 
           </div>
         </button>
       </div>
+      
+      {/* Panel flotante de pronóstico de oleaje detallado */}
+      <WaveForecastChart
+        isVisible={showDetailedForecast}
+        onClose={() => setShowDetailedForecast(false)}
+        days={forecastDays}
+      />
       </div>
     </div>
   )
