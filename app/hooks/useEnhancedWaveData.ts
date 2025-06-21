@@ -42,7 +42,7 @@ export function useEnhancedWaveData(latitude: number, longitude: number) {
         
         if (profileData.success && profileData.measurements.length > 0) {
           // Use the nearest measurement (1nm) as primary value
-          const nearestMeasurement = profileData.measurements.find(m => m.distance_nm === 1) 
+          const nearestMeasurement = profileData.measurements.find((m: any) => m.distance_nm === 1) 
             || profileData.measurements[0]
           
           setWaveData({
