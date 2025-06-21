@@ -1,0 +1,51 @@
+{
+  "total_visits": 3,
+  "unique_visitors": 1,
+  "online_users": 1,
+  "countries": {
+    "CL": {
+      "total_visits": 3,
+      "unique_visitors": 1,
+      "last_visit": "2025-06-21T19:20:27.910Z",
+      "sessions": [
+        {
+          "id": "visitor_1750533949592_ppv0936d2sc",
+          "country": "Chile",
+          "country_code": "CL",
+          "region": "Santiago Metropolitan",
+          "city": "Santiago",
+          "ip": "190.162.159.196",
+          "first_visit": "2025-06-21T19:19:17.498Z",
+          "last_activity": "2025-06-21T19:22:30.084Z",
+          "page_views": 3,
+          "is_online": true
+        }
+      ]
+    }
+  },
+  "recent_visitors": [
+    {
+      "id": "visitor_1750533949592_ppv0936d2sc",
+      "country": "Chile",
+      "country_code": "CL",
+      "region": "Santiago Metropolitan",
+      "city": "Santiago",
+      "ip": "190.162.159.196",
+      "first_visit": "2025-06-21T19:19:17.498Z",
+      "last_activity": "2025-06-21T19:22:30.084Z",
+      "page_views": 3,
+      "is_online": true
+    }
+  ],
+  "daily_stats": {
+    "2025-06-21": {
+      "visits": 3,
+      "countries": [
+        "CL"
+      ],
+      "peak_online": 1
+    }
+  },
+  "first_launch": "2025-06-21T19:19:17.498Z",
+  "last_activity": "2025-06-21T19:22:30.084Z"
+}

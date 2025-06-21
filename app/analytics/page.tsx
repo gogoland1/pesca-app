@@ -1,13 +1,114 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AnalyticsFull } from '../components/AdvancedAnalytics'
-import { ArrowLeft, BarChart3, Globe, Users, Eye } from 'lucide-react'
+import { ArrowLeft, BarChart3, Globe, Users, Eye, Lock, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { authenticateAdmin, isAdminAuthenticated, clearAdminSession } from '../lib/admin-auth'
 
 export default function AnalyticsPage() {
   const router = useRouter()
   const [showFullDetails, setShowFullDetails] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [password, setPassword] = useState('')
+  const [authError, setAuthError] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    // Check authentication on mount
+    const checkAuth = () => {
+      setIsAuthenticated(isAdminAuthenticated())
+      setIsLoading(false)
+    }
+    
+    checkAuth()
+  }, [])
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault()
+    setAuthError('')
+    
+    const result = authenticateAdmin(password)
+    if (result.success) {
+      setIsAuthenticated(true)
+      setPassword('')
+    } else {
+      setAuthError(result.error || 'Error de autenticación')
+    }
+  }
+
+  const handleLogout = () => {
+    clearAdminSession()
+    setIsAuthenticated(false)
+    setPassword('')
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md w-full space-y-8 p-8">
+          <div className="text-center">
+            <div className="bg-blue-100 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+              <Lock className="h-8 w-8 text-blue-600" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Acceso de Administrador
+            </h2>
+            <p className="text-gray-600">
+              Ingresa la contraseña para acceder a las estadísticas completas
+            </p>
+          </div>
+          
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Contraseña de Administrador
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Ingresa tu contraseña"
+                required
+              />
+            </div>
+            
+            {authError && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm text-red-600">{authError}</p>
+              </div>
+            )}
+            
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors"
+            >
+              Acceder
+            </button>
+          </form>
+          
+          <div className="text-center">
+            <button
+              onClick={() => router.back()}
+              className="text-sm text-gray-500 hover:text-gray-700 flex items-center space-x-1 mx-auto"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Volver</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -47,6 +148,13 @@ export default function AnalyticsPage() {
                 }`}
               >
                 {showFullDetails ? 'Vista Simple' : 'Vista Detallada'}
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-1 px-3 py-2 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Salir</span>
               </button>
             </div>
           </div>

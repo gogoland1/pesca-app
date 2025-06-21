@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Waves, Fish, Anchor, ArrowRight, ExternalLink } from 'lucide-react'
 import FishingPortSelector from './FishingPortSelector'
-import { AnalyticsSidebar } from './AdvancedAnalytics'
+import { PublicCounterMinimal } from './PublicVisitCounter'
 import type { FishingPort } from '../data/fishing-ports'
 
 interface LandingPageProps {
@@ -182,7 +182,7 @@ export default function LandingPage({ onPortSelected }: LandingPageProps) {
         </a>
         
         <div className="flex flex-col items-center space-y-3">
-          <AnalyticsSidebar className="bg-white/10 backdrop-blur-sm border-white/20 text-white" />
+          <PublicCounterMinimal className="text-blue-200" />
           <span className="text-blue-200 text-xs">
             🇨🇱 Desarrollado para pescadores artesanales chilenos
           </span>
