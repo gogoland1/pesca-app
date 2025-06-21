@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import type { FishingPort } from '../data/fishing-ports'
 import { useEnhancedWaveData, getWaveQualityIndicator } from '../hooks/useEnhancedWaveData'
 import WaveFrontProfileCard from './WaveFrontProfileCard'
+import { VisitCounterCompact } from './VisitCounter'
 
 interface WeatherDashboardProps {
   initialPort?: FishingPort | null
@@ -497,6 +498,10 @@ export default function WeatherDashboard({ initialPort }: WeatherDashboardProps 
               <div className="text-xs text-purple-200">mi otro proyecto</div>
             </div>
           </a>
+          
+          <div className="flex items-center justify-center mb-4">
+            <VisitCounterCompact />
+          </div>
           
           <div className="text-sm text-gray-500">
             <p>🇨🇱 Desarrollado para pescadores artesanales chilenos</p>
